@@ -1,0 +1,29 @@
+# Build artifacts
+build/
+*.json
+*.asc
+*.bin
+*.time
+*.rpt
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+*.swp
+*~
+
+# Sublime Text
+*.sublime-workspace
+.sublime-project
+
+# Editor backups
+*~
+*.bak
+*.swp
+*.swo
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
