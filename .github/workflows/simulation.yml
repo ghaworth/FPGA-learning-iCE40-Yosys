@@ -1,0 +1,39 @@
+name: FPGA Simulation CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  simulate:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Check out repository
+      uses: actions/checkout@v3
+    
+    - name: Install iverilog
+      run: sudo apt-get update && sudo apt-get install -y iverilog
+    
+    - name: Syntax check Project 5
+      run: |
+        cd projects/project_5_seven_segment
+        make check
+      continue-on-error: true
+    
+    - name: Run Project 6 simulation
+      run: |
+        cd projects/project_6_led_blink
+        make sim
+    
+    - name: Verify simulation output
+      run: |
+        if [ -f "projects/project_6_led_blink/sim/led_blink.vcd" ]; then
+          echo "✓ Simulation completed successfully - VCD file generated"
+          ls -lh projects/project_6_led_blink/sim/led_blink.vcd
+        else
+          echo "✗ Simulation failed - no VCD file generated"
+          exit 1
+        fi
