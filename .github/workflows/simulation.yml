@@ -37,3 +37,10 @@ jobs:
           echo "✗ Simulation failed - no VCD file generated"
           exit 1
         fi
+
+    - name: Run AoC Day 1 simulation
+      run: |
+        cd projects/aoc_2025/day_01
+        iverilog -o day_01_tb.vvp day_01_core.v day_01_core_tb.v
+        vvp day_01_tb.vvp | tee sim_output.txt
+        grep -q "PASS" sim_output.txt    
