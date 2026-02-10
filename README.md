@@ -73,5 +73,4 @@ Assumes tools are installed and available in `$PATH`.
 
 1. Project 5: Seven Segment Display (sequential logic, module instantiation)
 2. Project 6: Simulation and Testbenches (SystemVerilog introduction)
-3. ST7789 SPI Master (communication protocols, real hardware interaction)
-4. Advent of Code 2024 (systematic problem-solving with hardware constraints)
+3. Advent of Code 2024 (systematic problem-solving with hardware constraints)
