@@ -55,11 +55,9 @@ module Day_01_Core (
 					result <= num_zeros;	
 					running <= 0;
 				end else begin 
-					current_position <= next_position;
-					if (next_position == 0)
-						num_zeros <= num_zeros + 1;
+					num_zeros <= num_zeros + rotation_data;
 					index <= index + 1;
-					data_valid <= 0; // wait for next read
+					data_valid <= 0; 
 				end 
 			end 
 		end
