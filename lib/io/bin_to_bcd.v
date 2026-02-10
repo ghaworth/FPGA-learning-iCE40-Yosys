@@ -40,6 +40,7 @@ module bin_to_bcd (
 					register[50 +: 64] <= 0;
 					shift_count <= 0;
 					module_state <= CONVERTING;
+					done <= 0;
 				end
 			end
 
@@ -56,6 +57,7 @@ module bin_to_bcd (
 				// output result
 				bcd_num <= register[50 +: 64];
 				done <= 1;
+				module_state <= IDLE;
 			end
 		endcase
 	end

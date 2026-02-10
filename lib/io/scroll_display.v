@@ -12,9 +12,13 @@ module scroll_display #(
 	reg [COUNTER_BITS-1:0] counter = 0; 
 	reg [4:0] scroll_pos = 0;
 	reg running = 0; 
+	reg start_prev = 0;
+	wire start_edge = start && !start_prev;
 
 	always @(posedge clk) begin
-		if (start) begin
+		start_prev <= start;
+
+		if (start_edge) begin
 			running <= 1;
 			scroll_pos <= 0;
 			counter <= 1;

@@ -17,7 +17,7 @@
 
 module Binary_To_7Segment (
   input i_Clk,
-  input [3:0] i_Binary_Num,
+  input [4:0] i_Binary_Num,
   output o_Segment_A,
   output o_Segment_B,
   output o_Segment_C,
@@ -48,17 +48,19 @@ module Binary_To_7Segment (
       4'b1101: r_Segments <= 7'b1011110;  // D: b,c,d,e,g
       4'b1110: r_Segments <= 7'b1111001;  // E: a,d,e,f,g
       4'b1111: r_Segments <= 7'b1110001;  // F: a,e,f,g
+      5'b10000: r_Segments <= 7'b0000000; // blank: all off
+      5'b10001: r_Segments <= 7'b0001000; // dot: segment d only
       default: r_Segments <= 7'b0000000;  // All off
     endcase
   end
 
   // Output format: {g, f, e, d, c, b, a} from MSB to LSB
-  assign o_Segment_A = r_Segments[0];
-  assign o_Segment_B = r_Segments[1];
-  assign o_Segment_C = r_Segments[2];
-  assign o_Segment_D = r_Segments[3];
-  assign o_Segment_E = r_Segments[4];
-  assign o_Segment_F = r_Segments[5];
-  assign o_Segment_G = r_Segments[6];
+  assign o_Segment_A = ~r_Segments[0];
+  assign o_Segment_B = ~r_Segments[1];
+  assign o_Segment_C = ~r_Segments[2];
+  assign o_Segment_D = ~r_Segments[3];
+  assign o_Segment_E = ~r_Segments[4];
+  assign o_Segment_F = ~r_Segments[5];
+  assign o_Segment_G = ~r_Segments[6];
 
 endmodule

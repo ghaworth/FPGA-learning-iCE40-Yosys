@@ -5,6 +5,7 @@ build/
 *.bin
 *.time
 *.rpt
+*.vvp
 
 # macOS
 .DS_Store
