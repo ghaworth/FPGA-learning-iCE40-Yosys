@@ -38,19 +38,36 @@ module Day_07_Core (
 			bitshifts <= 0;
 			splits <= 0;
 			done <= 0;
+			data_valid <= 0;
 			state <= LOAD;
 		end
 
 		case(state)
 			LOAD: begin
-
+				if (!data_valid) begin
+					// wait one cycle for RAM read
+					data_valid <= 1;
+				end else begin
+					bitmask[words_read*16 +: 16] <= splitter_data;
+					words_read <= words_read + 1;
+					ram_addr <= ram_addr + 1;
+					data_valid <= 0;
+					if (words_read >= 8) begin
+						state <= PROCESS;
+					end
+				end
 			end
+
 			PROCESS: begin
-
+				hits <= active & bitmask;
+				active <= (active & ~bitmask) | ((active & bitmask) << 1) | ((active & bitmask) >> 1);
+				state <= COUNT;
 			end
+
 			COUNT: begin
 
 			end
+			
 			DONE: begin
 
 			end
