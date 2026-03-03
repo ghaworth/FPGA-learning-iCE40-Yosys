@@ -31,4 +31,10 @@ module day_01_core_tb;
 		$finish;
 	end
 
+	initial begin
+    #100000;
+    $display("TIMEOUT: done never asserted");
+    $finish;
+	end
+
 endmodule
