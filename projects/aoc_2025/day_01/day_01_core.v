@@ -7,10 +7,10 @@ module Day_01_Core (
 
 	
 	// Block RAM for rotations
-	reg [7:0] rotations [0:4659];
+	reg [7:0] rotations [0:4658];
 	initial $readmemh("rotations.hex", rotations);
 
-	localparam NUM_ROTATIONS = 4660;
+	localparam NUM_ROTATIONS = 4659;
 
 	reg [6:0] current_position = 50;
 	reg [12:0] num_zeros = 0;
