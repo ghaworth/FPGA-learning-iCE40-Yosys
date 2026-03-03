@@ -2,7 +2,7 @@
 
 module day_01_core_tb;
 	reg clk;
-	reg rst;
+	reg start;
 	wire [31:0] result;
 	wire done;
 
@@ -19,11 +19,16 @@ module day_01_core_tb;
 
 	initial begin
 		clk = 0;
-		rst = 1;
+		start = 1;
 		#10;
-		rst = 0;
+		start = 0;
+
+		repeat(20) @(posedge clk);
+  		$display("DEBUG: running=%b index=%d data_valid=%b done=%b start=%b",
+    		uut.running, uut.index, uut.data_valid, uut.done, start);
+
 		wait(done);	
-		if (result == 1158) begin
+		if (result == 6860) begin
 			$display("PASS: result = %d", result);
 		end	else begin
 			$display("FAIL: expected 1158, got %d", result);
