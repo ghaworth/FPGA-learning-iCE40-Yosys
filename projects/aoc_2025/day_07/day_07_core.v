@@ -4,7 +4,7 @@ module Day_07_Core (
 	output reg [10:0] result = 0,
 	output reg done = 0
 );
-	// Block RAM for rotations
+	// Block RAM for splitter data
 	reg [15:0] splitters [0:629];
 	initial $readmemh("splitters.hex", splitters);
 
@@ -22,6 +22,7 @@ module Day_07_Core (
 	reg [10:0] splits;
 	reg [2:0] state;
 	reg [6:0] row_count;
+	reg data_valid = 0;
 
 	// Synchronous read from block RAM
 	reg [15:0] splitter_data;
@@ -40,9 +41,8 @@ module Day_07_Core (
 			done <= 0;
 			data_valid <= 0;
 			state <= LOAD;
-		end
-
-		case(state)
+		end else begin
+			case(state)
 			LOAD: begin
 				if (!data_valid) begin
 					// wait one cycle for RAM read
@@ -65,11 +65,31 @@ module Day_07_Core (
 			end
 
 			COUNT: begin
+				splits <= splits + hits[0];
+				hits <= hits >> 1;
+				bitshifts <= bitshifts + 1;
+				if (bitshifts >= 140) begin
+					bitshifts <= 0;
+					if (row_count < 69) begin
+						// loop back to LOAD next row
+						row_count <= row_count + 1;
+						state <= LOAD;
+						words_read <= 0;
+						data_valid <= 0;
+					end else begin
+						row_count <= 0;
+						state <= DONE;
+					end 
 
+				end 
 			end
 			
 			DONE: begin
-
+				done <= 1;
+				result <= splits;
 			end
 		endcase
+			
+		end
+
 	end
