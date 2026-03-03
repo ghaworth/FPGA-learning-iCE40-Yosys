@@ -7,9 +7,9 @@ module day_01_core_tb;
 	wire done;
 
 	// Instantiate the core
-	day_01_core uut (
+	Day_01_Core uut (
 		.clk(clk),
-		.rst(rst),
+		.start(start),
 		.result(result),
 		.done(done)
 	);
