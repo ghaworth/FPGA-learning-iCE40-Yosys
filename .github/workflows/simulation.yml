@@ -2,45 +2,51 @@ name: FPGA Simulation CI
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [main, develop]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   simulate:
     runs-on: ubuntu-latest
-    
     steps:
-    - name: Check out repository
-      uses: actions/checkout@v3
-    
-    - name: Install iverilog
-      run: sudo apt-get update && sudo apt-get install -y iverilog
-    
-    - name: Syntax check Project 5
-      run: |
-        cd projects/project_5_seven_segment
-        make check
-      continue-on-error: true
-    
-    - name: Run Project 6 simulation
-      run: |
-        cd projects/project_6_led_blink
-        make sim
-    
-    - name: Verify simulation output
-      run: |
-        if [ -f "projects/project_6_led_blink/sim/led_blink.vcd" ]; then
-          echo "✓ Simulation completed successfully - VCD file generated"
-          ls -lh projects/project_6_led_blink/sim/led_blink.vcd
-        else
-          echo "✗ Simulation failed - no VCD file generated"
-          exit 1
-        fi
+      - name: Check out repository
+        uses: actions/checkout@v4
 
-    - name: Run AoC Day 1 simulation
-      run: |
-        cd projects/aoc_2025/day_01
-        iverilog -o day_01_tb.vvp day_01_core.v day_01_core_tb.v
-        vvp day_01_tb.vvp | tee sim_output.txt
-        grep -q "PASS" sim_output.txt    
+      - name: Install iverilog
+        run: sudo apt-get update && sudo apt-get install -y iverilog
+
+      - name: Discover and run simulations
+        run: |
+          failed=0
+          found=0
+          for tb in $(find projects -name "*_tb.v"); do
+            dir=$(dirname "$tb")
+            if ! grep -q "^sim:" "$dir/Makefile" 2>/dev/null; then
+              echo "⚠ Skipping $dir — no sim target in Makefile"
+              continue
+            fi
+            found=$((found + 1))
+            echo "━━━ Running: $dir ━━━"
+            if (cd "$dir" && make sim 2>&1) | tee /tmp/sim_output.txt; then
+              if grep -q "PASS" /tmp/sim_output.txt; then
+                echo "✓ PASS: $dir"
+              elif grep -q "FAIL\|TIMEOUT" /tmp/sim_output.txt; then
+                echo "✗ FAIL: $dir"
+                failed=$((failed + 1))
+              else
+                echo "? No PASS/FAIL found: $dir"
+                failed=$((failed + 1))
+              fi
+            else
+              echo "✗ ERROR: $dir (make sim returned non-zero)"
+              failed=$((failed + 1))
+            fi
+            echo ""
+          done
+          echo "━━━ Summary: $found simulations found, $failed failed ━━━"
+          if [ "$found" -eq 0 ]; then
+            echo "No simulations discovered"
+            exit 1
+          fi
+          exit $failed

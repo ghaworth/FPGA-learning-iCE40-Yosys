@@ -30,4 +30,8 @@ prog: $(TOP).bin
 clean:
 	rm -f *.json *.asc *.bin
 
-.PHONY: all prog clean
+sim:
+	iverilog -o day_01_tb.vvp day_01_core.v day_01_core_tb.v
+	vvp day_01_tb.vvp
+
+.PHONY: all prog clean sim
