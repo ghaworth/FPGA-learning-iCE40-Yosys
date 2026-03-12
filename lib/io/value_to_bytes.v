@@ -1,5 +1,5 @@
 module Value_To_Bytes 
-    #(parameter VALUE_WIDTH)
+    #(parameter VALUE_WIDTH = 32)
     (
      input clk,
      input send_data_now,
