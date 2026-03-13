@@ -5,30 +5,70 @@ module Day_07_Top (
 );
   // state machine definitions
   localparam IDLE = 0;
-  localparam SEND_RESULT = 1;
-  localparam SEND_TIMER = 2;
+  localparam SEND_SYNC1 = 1;
+  localparam SEND_SYNC2 = 2;
+  localparam SEND_RESULT = 3;
+  localparam SEND_TIMER = 4;
+
   reg [2:0] current_state = 0;
   wire sending_result = (current_state == SEND_RESULT);
 
   reg [2:0] prev_state = 0;
   wire enter_send_result = (current_state == SEND_RESULT) && (prev_state != SEND_RESULT);
   wire enter_send_timer = (current_state == SEND_TIMER) && (prev_state != SEND_TIMER);
+  wire enter_sync1 = (current_state == SEND_SYNC1) && (prev_state != SEND_SYNC1);
+  wire enter_sync2 = (current_state == SEND_SYNC2) && (prev_state != SEND_SYNC2);
+
+  // muxed signals
+  reg [7:0] mux_byte_out;
+  reg mux_byte_sent;
+  wire result_next = (sending_result == SEND_RESULT) ? tx_done : 1'b0;
+  wire cc_next = (sending_result == SEND_TIMER) ? 1'b0 : tx_done;
+
+  always @(*) begin
+    case (current_state)
+      SEND_SYNC1: begin
+        mux_byte_out = 8'hAA;
+        mux_byte_sent = enter_sync1;
+      end
+      SEND_SYNC2: begin
+        mux_byte_out = 8'h55;
+        mux_byte_sent = enter_sync2;
+      end
+      SEND_RESULT: begin
+        mux_byte_out = result_out;
+        mux_byte_sent = result_sent;
+      end
+      default: begin
+        mux_byte_out = cc_byte_out;
+        mux_byte_sent = cc_sent;
+      end
+    endcase 
+  end
 
   always @(posedge i_Clk) begin
     prev_state <= current_state;
     case (current_state) 
       IDLE: begin 
         if (core_done_edge) begin
+          current_state <= SEND_SYNC1;
+        end
+      end
+      SEND_SYNC1: begin 
+        if (tx_done) begin
+          current_state <= SEND_SYNC2;
+        end
+      end        
+      SEND_SYNC2: begin
+        if (tx_done) begin
           current_state <= SEND_RESULT;
         end
-      end  
-
-      SEND_RESULT: begin
+      end
+      SEND_RESULT: begin 
         if (result_done) begin
           current_state <= SEND_TIMER;
         end
       end
-
       SEND_TIMER: begin 
         if (cc_done) begin
           current_state <= IDLE;
@@ -36,12 +76,6 @@ module Day_07_Top (
       end
     endcase
   end
-
-  // muxed signals
-  wire [7:0] mux_byte_out = sending_result ? result_out : cc_byte_out;
-  wire mux_byte_sent = sending_result ? result_sent : cc_sent;
-  wire result_next = sending_result ? tx_done : 1'b0;
-  wire cc_next = sending_result ? 1'b0 : tx_done;
 
   // core outputs
   wire [10:0] core_result;
