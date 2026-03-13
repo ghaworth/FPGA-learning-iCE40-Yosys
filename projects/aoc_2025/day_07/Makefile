@@ -10,10 +10,10 @@ LIB_CONV = ../../../lib/converters
 # Source files
 SRCS = day_07_top.v \
        day_07_core.v \
-       $(LIB_IO)/bin_to_bcd.v \
-       $(LIB_IO)/scroll_display.v \
+       day_07_timer.v \
        $(LIB_IO)/Debounce_Switch.v \
-       $(LIB_CONV)/Binary_To_7Segment.v
+       $(LIB_IO)/uart_tx.v \
+       $(LIB_IO)/value_to_bytes.v \
 
 # Build targets
 all: $(TOP).bin
