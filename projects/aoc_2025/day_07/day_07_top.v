@@ -22,8 +22,8 @@ module Day_07_Top (
   // muxed signals
   reg [7:0] mux_byte_out;
   reg mux_byte_sent;
-  wire result_next = (sending_result == SEND_RESULT) ? tx_done : 1'b0;
-  wire cc_next = (sending_result == SEND_TIMER) ? 1'b0 : tx_done;
+  wire result_next = (current_state == SEND_RESULT) ? tx_done : 1'b0;
+  wire cc_next = (current_state == SEND_TIMER) ? tx_done : 1'b0;
 
   always @(*) begin
     case (current_state)
@@ -106,7 +106,7 @@ module Day_07_Top (
   wire button_edge;
   assign button_edge = reset_debounced && !button_prev;
 
-  reg core_done_prev = 0;
+  reg core_done_prev = 1;
   wire core_done_edge;
   assign core_done_edge = core_done && !core_done_prev;
 
