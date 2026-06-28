@@ -4,7 +4,7 @@ Hardware implementations of algorithms on the Lattice iCE40 HX1K (Nandland Go Bo
 
 ## Structure
 
-```
+```text
 FPGA-learning-iCE40-Yosys/
 ├── lib/                           # Reusable component library
 │   ├── io/                        # I/O interfaces
@@ -16,6 +16,7 @@ FPGA-learning-iCE40-Yosys/
 │   └── converters/                # Data conversion modules
 │       └── Binary_To_7Segment.v   # BCD to 7-segment encoding
 ├── projects/                      # Individual project implementations
+│   ├── ai-primitives/             # TinyML / transformer building blocks on iCE40
 │   ├── project_5_seven_segment/
 │   ├── project_6_led_blink/
 │   ├── project_9_vga/
@@ -52,9 +53,22 @@ FPGA-learning-iCE40-Yosys/
 - **First-principles approach**: Derive solutions through reasoning, not copy-paste.
 - **One place to fix things**: Library modules live in `lib/`, not copied into projects.
 
+## AI Primitives
+
+`projects/ai-primitives/` contains small, well-documented experiments around fixed-point arithmetic, multiply-accumulate units, dot products, and toy attention-style blocks on the Nandland Go Board.
+
+The goal is not to run a full neural network or LLM on the iCE40 HX1K, but to build intuition for the hardware primitives that modern TinyML and transformer accelerators are made from.
+
+Planned progression:
+
+- Fixed-point arithmetic playground
+- MAC unit
+- 4-element dot product
+- Attention score demo
+
 ## Building a Project
 
-Each project has its own `Makefile`:
+Each project or subproject has its own `Makefile` where appropriate:
 
 ```bash
 cd projects/aoc_2025/day_07
