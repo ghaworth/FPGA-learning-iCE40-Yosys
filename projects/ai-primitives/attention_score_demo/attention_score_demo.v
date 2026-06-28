@@ -14,6 +14,11 @@ module attention_score_demo (
     output reg  done
 );
 
+    reg [3:0] step = 0;
+    reg signed [15:0] acc = 0;
+    reg signed [7:0] cur_q = 0;
+    reg signed [7:0] cur_k = 0;
+
     reg [3:0] step;
     reg signed [15:0] acc;
 
